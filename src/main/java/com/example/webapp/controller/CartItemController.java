@@ -1,12 +1,10 @@
 package com.example.webapp.controller;
 
-import com.example.webapp.entity.Batch;
-import com.example.webapp.entity.Cart;
-import com.example.webapp.entity.CartItem;
-import com.example.webapp.entity.Status;
+import com.example.webapp.entity.*;
 import com.example.webapp.repository.BatchRepository;
 import com.example.webapp.repository.CartItemRepository;
 import com.example.webapp.repository.CartRepository;
+import com.example.webapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,8 +24,12 @@ public class CartItemController {
     @Autowired
     private BatchRepository batchRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @PostMapping("/addItem/batch/{batchId}/quantity/{num}/customer/{customerId}")
     public CartItem addOrderItem(@PathVariable Integer customerId, @PathVariable Integer batchId, @PathVariable Integer num) {
+        User user = userRepository.findById(1).get();
         Batch selectedBatch = batchRepository.findById(batchId).get();
         List<Cart> customerCart = cartRepository.findAllByCustomerId(customerId);
         Cart requiredCart = null;
@@ -53,6 +55,7 @@ public class CartItemController {
                 cart.addCartItem(item);
                 cart.setTotalAmount(cart.getTotalAmount()+item.getTotal());
             }
+            cart.setUser(user);
             cartRepository.save(cart);
             return item;
         } else {
@@ -61,6 +64,7 @@ public class CartItemController {
             item.setCart(newCustomerCart);
             newCustomerCart.addCartItem(item);
             newCustomerCart.setTotalAmount(newCustomerCart.getTotalAmount()+ item.getTotal());
+            newCustomerCart.setUser(user);
             cartRepository.save(newCustomerCart);
             return item;
         }

@@ -10,4 +10,6 @@ public interface CartRepository extends JpaRepository<Cart, Integer> {
     boolean existsByCustomerId(Integer id);
 
     List<Cart> findAllByCustomerId(Integer id);
+
+    List<Cart> findAllByUserId(Integer id);
 }
