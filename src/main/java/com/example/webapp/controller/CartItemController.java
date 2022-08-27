@@ -27,11 +27,11 @@ public class CartItemController {
     @Autowired
     private UserRepository userRepository;
 
-    @PostMapping("/addItem/batch/{batchId}/quantity/{num}/customer/{customerId}")
-    public CartItem addOrderItem(@PathVariable Integer customerId, @PathVariable Integer batchId, @PathVariable Integer num) {
-        User user = userRepository.findById(1).get();
+    @PostMapping("/addItem/batch/{batchId}/quantity/{num}/user/{userId}")
+    public CartItem addOrderItem(@PathVariable Integer userId, @PathVariable Integer batchId, @PathVariable Integer num) {
+        User user = userRepository.findById(userId).get();
         Batch selectedBatch = batchRepository.findById(batchId).get();
-        List<Cart> customerCart = cartRepository.findAllByCustomerId(customerId);
+        List<Cart> customerCart = cartRepository.findAllByUserId(userId);
         Cart requiredCart = null;
         for(Cart c:customerCart) {
             if(c.getStatus().equals(Status.NotPlaced))
@@ -59,7 +59,7 @@ public class CartItemController {
             cartRepository.save(cart);
             return item;
         } else {
-            Cart newCustomerCart = cartRepository.save(new Cart(0L, Status.NotPlaced, customerId));
+            Cart newCustomerCart = cartRepository.save(new Cart(0L, Status.NotPlaced, userId));
             CartItem item = new CartItem(num, selectedBatch.getMrp()*num, selectedBatch);
             item.setCart(newCustomerCart);
             newCustomerCart.addCartItem(item);
