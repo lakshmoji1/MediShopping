@@ -31,6 +31,7 @@ public class CartItemController {
     public CartItem addOrderItem(@PathVariable Integer userId, @PathVariable Integer batchId, @PathVariable Integer num) {
         User user = userRepository.findById(userId).get();
         Batch selectedBatch = batchRepository.findById(batchId).get();
+        Integer currentQuantity = selectedBatch.getQuantity();
         List<Cart> customerCart = cartRepository.findAllByUserId(userId);
         Cart requiredCart = null;
         for(Cart c:customerCart) {
@@ -45,6 +46,7 @@ public class CartItemController {
                 Long amountToBeReduced = result.getTotal();
                 for(CartItem updateItem : cart.getCartItems()) {
                     if(updateItem.equals(result)) {
+                        selectedBatch.setQuantity(currentQuantity-num + updateItem.getQuantity());
                         updateItem.setTotal(selectedBatch.getMrp()*num);
                         updateItem.setQuantity(num);
                     }
@@ -54,9 +56,11 @@ public class CartItemController {
             else {
                 cart.addCartItem(item);
                 cart.setTotalAmount(cart.getTotalAmount()+item.getTotal());
+                selectedBatch.setQuantity(currentQuantity-item.getQuantity());
             }
             cart.setUser(user);
             cartRepository.save(cart);
+            batchRepository.save(selectedBatch);
             return item;
         } else {
             Cart newCustomerCart = cartRepository.save(new Cart(0L, Status.NotPlaced, userId));
@@ -65,6 +69,7 @@ public class CartItemController {
             newCustomerCart.addCartItem(item);
             newCustomerCart.setTotalAmount(newCustomerCart.getTotalAmount()+ item.getTotal());
             newCustomerCart.setUser(user);
+            selectedBatch.setQuantity(currentQuantity - item.getQuantity());
             cartRepository.save(newCustomerCart);
             return item;
         }

@@ -23,6 +23,9 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "owner")
     private Shop shop;
 
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    private Credentials credentials;
+
     public Integer getId() {
         return id;
     }
@@ -63,7 +66,17 @@ public class User {
     }
 
     public void setShop(Shop shop) {
-        this.shop = shop;
         shop.setOwner(this);
+        this.shop = shop;
     }
+
+    public void setCredentials(Credentials credentials) {
+        credentials.setUser(this);
+        List<Role> userRoles = new ArrayList<Role>();
+        userRoles.add(new Role(1, "Admin", "manage everything"));
+        userRoles.add(new Role(2, "Assistant", "manage questions and reviews"));
+        credentials.addRole(userRoles);
+        this.credentials = credentials;
+    }
+
 }
