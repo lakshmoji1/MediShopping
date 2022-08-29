@@ -1,6 +1,8 @@
 package com.example.webapp.controller;
 
+import com.example.webapp.entity.Role;
 import com.example.webapp.entity.User;
+import com.example.webapp.repository.RoleRepository;
 import com.example.webapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     @GetMapping
     public ResponseEntity<List<User>> findAllUsers() {
         return new ResponseEntity<>(userService.findAllUsers(), HttpStatus.OK);
@@ -23,6 +28,8 @@ public class UserController {
 
     @PostMapping("/save")
     public User saveUser(@RequestBody User user) {
+        Role initialRole = roleRepository.findById(2).get();
+        user.getCredentials().addRole(List.of(initialRole));
         return userService.save(user);
     }
 

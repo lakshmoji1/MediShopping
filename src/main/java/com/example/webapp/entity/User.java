@@ -72,11 +72,15 @@ public class User {
 
     public void setCredentials(Credentials credentials) {
         credentials.setUser(this);
-        List<Role> userRoles = new ArrayList<Role>();
-        userRoles.add(new Role(1, "Admin", "manage everything"));
-        userRoles.add(new Role(2, "Assistant", "manage questions and reviews"));
-        credentials.addRole(userRoles);
+//        List<Role> userRoles = new ArrayList<Role>();
+//        userRoles.add(new Role(1, "Admin", "manage everything"));
+//        userRoles.add(new Role(2, "Assistant", "manage questions and reviews"));
+//        credentials.addRole(userRoles);
         this.credentials = credentials;
+    }
+
+    public Credentials getCredentials() {
+        return this.credentials;
     }
 
 }
