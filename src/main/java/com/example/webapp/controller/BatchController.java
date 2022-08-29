@@ -2,6 +2,7 @@ package com.example.webapp.controller;
 
 import com.example.webapp.entity.Batch;
 import com.example.webapp.entity.Medicine;
+import com.example.webapp.exception.ResourceNotFoundException;
 import com.example.webapp.repository.BatchRepository;
 import com.example.webapp.repository.MedicineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,36 +26,31 @@ public class BatchController {
 
     @PostMapping("/medicine/{id}")
     public Batch create(@PathVariable Integer id, @RequestBody Batch batch) {
-        Medicine medicine = medicineRepository.findById(id).get();
+        Medicine medicine = medicineRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No Medicine available with id "+id));;
         batch.setMedicine(medicine);
         return batchRepository.save(batch);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Batch> update(@RequestBody Batch batch, @PathVariable Integer id) {
+    public Batch update(@RequestBody Batch batch, @PathVariable Integer id) {
         Optional<Batch> oldBatch = batchRepository.findById(id);
         Medicine defaultMedicine = medicineRepository.findById(1).get();
-        if(oldBatch == null) {
-            batch.setMedicine(defaultMedicine);
+        if(oldBatch.isPresent()) {
+            oldBatch.get().setBuy(batch.getBuy());
+            oldBatch.get().setFree(batch.getFree());
+            oldBatch.get().setMrp(batch.getMrp());
+            oldBatch.get().setMrp(batch.getMrp());
+            return batchRepository.save(oldBatch.get());
         } else {
-            batch.setBatchId(oldBatch.get().getBatchId());
-            batch.setMedicine(oldBatch.get().getMedicine());
+            batch.setMedicine(defaultMedicine);
+            return batchRepository.save(batch);
         }
-        batchRepository.save(batch);
-
-        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Batch> delete(@PathVariable Integer id) {
-        Optional<Batch> optionalBatch = batchRepository.findById(id);
-        if (!optionalBatch.isPresent()) {
-            return ResponseEntity.unprocessableEntity().build();
-        }
-
-        batchRepository.delete(optionalBatch.get());
-
-        return ResponseEntity.noContent().build();
+    public void delete(@PathVariable Integer id) {
+        Batch optionalBatch = batchRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No Batch available with id "+id));;
+        batchRepository.delete(optionalBatch);
     }
 
     @GetMapping
@@ -63,20 +59,19 @@ public class BatchController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Batch> getById(@PathVariable Integer id) {
-        Optional<Batch> optionalBatch = batchRepository.findById(id);
-        if (!optionalBatch.isPresent()) {
-            return ResponseEntity.unprocessableEntity().build();
+    public Batch getById(@PathVariable Integer id) {
+        Batch optionalBatch = batchRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No Batch available with id "+id));;
+        if (optionalBatch != null) {
+            return optionalBatch;
         }
-
-        return ResponseEntity.ok(optionalBatch.get());
+        return null;
     }
 
     @GetMapping("/{id}/medicine")
     public String getMedicineNameByBatchId(@PathVariable Integer id) {
-        Optional<Batch> optionalBatch = batchRepository.findById(id);
-        if (optionalBatch.isPresent()) {
-            return optionalBatch.get().getMedicine().getName();
+        Batch optionalBatch = batchRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No Batch available with id "+id));;
+        if (optionalBatch != null) {
+            return optionalBatch.getMedicine().getName();
         } else
             return null;
     }

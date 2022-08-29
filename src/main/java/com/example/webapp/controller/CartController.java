@@ -2,7 +2,9 @@ package com.example.webapp.controller;
 
 import com.example.webapp.entity.Cart;
 import com.example.webapp.entity.Status;
+import com.example.webapp.entity.User;
 import com.example.webapp.repository.CartRepository;
+import com.example.webapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +17,9 @@ public class CartController {
 
     @Autowired
     private CartRepository cartRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping("/user/{userId}/{orderStatus}")
     public List<Cart> getCartByStatus(@PathVariable String orderStatus, @PathVariable Integer userId) {
@@ -31,6 +36,8 @@ public class CartController {
         List<Cart> userCartList = cartRepository.findAllByUserId(userId);
         Cart userCart = userCartList.stream().filter(cart -> cart.getStatus().equals(Status.NotPlaced)).collect(Collectors.toList()).get(0);
         userCart.setStatus(Status.Placed);
+        User currentUser = userRepository.findById(userId).get();
+        currentUser.getShop().addOrderAmountToBalance(userCart.getTotalAmount());
         return cartRepository.save(userCart);
     }
 

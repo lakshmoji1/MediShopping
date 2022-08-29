@@ -20,6 +20,9 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private List<Cart> cartList = new ArrayList<>();
 
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "owner")
+    private Shop shop;
+
     public Integer getId() {
         return id;
     }
@@ -53,6 +56,14 @@ public class User {
             cart.setUser(this);
         }
         this.cartList = cartList;
+    }
 
+    public Shop getShop() {
+        return shop;
+    }
+
+    public void setShop(Shop shop) {
+        this.shop = shop;
+        shop.setOwner(this);
     }
 }
