@@ -2,6 +2,7 @@ package com.example.webapp.controller;
 
 import com.example.webapp.entity.Role;
 import com.example.webapp.entity.User;
+import com.example.webapp.model.UserModel;
 import com.example.webapp.repository.RoleRepository;
 import com.example.webapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -27,10 +29,8 @@ public class UserController {
     }
 
     @PostMapping("/save")
-    public User saveUser(@RequestBody User user) {
-        Role initialRole = roleRepository.findById(2).get();
-        user.getCredentials().addRole(List.of(initialRole));
-        return userService.save(user);
+    public User saveUser(@RequestBody UserModel userModel) {
+        return userService.save(userModel);
     }
 
     @GetMapping("/{id}")
