@@ -25,4 +25,13 @@ public class Batch {
     @JoinColumn(name = "medicine_id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Medicine medicine;
+
+    public Batch(String number, Long buy, Long free, Integer quantity, Long mrp, Medicine medicine) {
+        this.number = number;
+        this.buy = buy;
+        this.free = free;
+        this.quantity = quantity;
+        this.mrp = mrp;
+        this.medicine = medicine;
+    }
 }

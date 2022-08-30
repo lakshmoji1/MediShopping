@@ -26,6 +26,11 @@ public class Medicine {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Company company;
 
+    public Medicine(String name, Company company) {
+        this.name = name;
+        this.company = company;
+    }
+
     public int getMedicineId() {
         return medicineId;
     }
