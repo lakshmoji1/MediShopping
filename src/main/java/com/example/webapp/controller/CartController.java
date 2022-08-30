@@ -1,13 +1,13 @@
 package com.example.webapp.controller;
 
-import com.example.webapp.entity.Cart;
-import com.example.webapp.entity.Status;
-import com.example.webapp.entity.User;
+import com.example.webapp.entity.*;
 import com.example.webapp.repository.CartRepository;
+import com.example.webapp.repository.PaymentHistoryRepository;
 import com.example.webapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +20,9 @@ public class CartController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PaymentHistoryRepository paymentHistoryRepository;
 
     @GetMapping("/user/{userId}/{orderStatus}")
     public List<Cart> getCartByStatus(@PathVariable String orderStatus, @PathVariable Integer userId) {
@@ -38,6 +41,8 @@ public class CartController {
         userCart.setStatus(Status.Placed);
         User currentUser = userRepository.findById(userId).get();
         currentUser.getShop().addOrderAmountToBalance(userCart.getTotalAmount());
+        PaymentHistory paymentHistory = new PaymentHistory(PaymentType.Received, new Date(), userCart.getTotalAmount(), currentUser);
+        paymentHistoryRepository.save(paymentHistory);
         return cartRepository.save(userCart);
     }
 

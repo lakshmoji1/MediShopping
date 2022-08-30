@@ -1,8 +1,8 @@
 package com.example.webapp.controller;
 
-import com.example.webapp.entity.Role;
 import com.example.webapp.entity.User;
 import com.example.webapp.model.UserModel;
+import com.example.webapp.repository.PaymentHistoryRepository;
 import com.example.webapp.repository.RoleRepository;
 import com.example.webapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +22,9 @@ public class UserController {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private PaymentHistoryRepository paymentHistoryRepository;
 
     @GetMapping
     public ResponseEntity<List<User>> findAllUsers() {
