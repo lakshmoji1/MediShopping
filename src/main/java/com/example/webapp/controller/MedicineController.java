@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +37,7 @@ public class MedicineController {
     }
 
     @PostMapping("/company/{id}")
+    @CacheEvict(value = "medicines", allEntries = true)
     public Medicine create(@PathVariable Integer id, @RequestBody Medicine medicine) {
         Company company = companyRepository.findById(id).get();
         medicine.setCompany(company);
@@ -42,6 +46,10 @@ public class MedicineController {
     }
 
     @PutMapping("/{id}")
+    @Caching(evict = {
+            @CacheEvict(value = "medicines", allEntries = true),
+            @CacheEvict(value = "medicine", key = "#p0")
+    })
     public ResponseEntity<Medicine> update(@PathVariable Integer id,@RequestBody Medicine medicine) {
        Medicine oldMedicine = medicineRepository.findById(id).get();
         medicine.setMedicineId(oldMedicine.getMedicineId());
@@ -52,6 +60,10 @@ public class MedicineController {
     }
 
     @DeleteMapping("/{id}")
+    @Caching(evict = {
+            @CacheEvict(value = "medicines", allEntries = true),
+            @CacheEvict(value = "medicine", key = "#p0")
+    })
     public ResponseEntity<Medicine> delete(@PathVariable Integer id) {
         Optional<Medicine> optionalMedicine = medicineRepository.findById(id);
         if (!optionalMedicine.isPresent()) {
@@ -64,6 +76,7 @@ public class MedicineController {
     }
 
     @GetMapping("/{id}")
+    @Cacheable(value = "medicine", key = "#p0")
     public ResponseEntity<Medicine> getById(@PathVariable Integer id) {
         Optional<Medicine> optionalMedicine = medicineRepository.findById(id);
         if (!optionalMedicine.isPresent()) {
@@ -91,6 +104,12 @@ public class MedicineController {
             medicineQuantities.add(new MedicineQuantity(medicine.getName(), batchQuantities, sum));
         }
         return medicineQuantities;
+    }
+
+    @GetMapping("/all")
+    @Cacheable("medicines")
+    public List<Medicine> getAllMedicines() {
+        return medicineRepository.findAll();
     }
 }
 

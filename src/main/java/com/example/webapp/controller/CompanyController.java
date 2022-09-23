@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-//@RequestMapping("/api/v1/companies")
+@RequestMapping("/api/v1/companies")
 public class CompanyController {
 
     @Autowired
