@@ -26,8 +26,6 @@ public class Credentials {
 
     private String email;
     @NotEmpty
-    @Column(length=40, nullable = false)
-
     private String password;
 
     @OneToOne(fetch = FetchType.EAGER)
@@ -50,7 +48,7 @@ public class Credentials {
 
     public void addRole(List<Role> roles) {
         for(Role role : roles)
-        this.roles.add(role);
+            this.roles.add(role);
     }
 
 }
