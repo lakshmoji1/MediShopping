@@ -38,11 +38,11 @@ public class CartController {
     public Cart placeCustomerCart(@PathVariable Integer userId, @PathVariable Integer cartId) {
         List<Cart> userCartList = cartRepository.findAllByUserId(userId);
         Cart userCart = userCartList.stream().filter(cart -> cart.getStatus().equals(Status.NotPlaced)).collect(Collectors.toList()).get(0);
-        userCart.setStatus(Status.Placed);
-        User currentUser = userRepository.findById(userId).get();
-        currentUser.getShop().addOrderAmountToBalance(userCart.getTotalAmount());
-        PaymentHistory paymentHistory = new PaymentHistory(PaymentType.Received, new Date(), userCart.getTotalAmount(), currentUser);
-        paymentHistoryRepository.save(paymentHistory);
+        userCart.setStatus(Status.Waiting);
+//        User currentUser = userRepository.findById(userId).get();
+//        currentUser.getShop().addOrderAmountToBalance(userCart.getTotalAmount());
+//        PaymentHistory paymentHistory = new PaymentHistory(PaymentType.Received, new Date(), userCart.getTotalAmount(), currentUser);
+//        paymentHistoryRepository.save(paymentHistory);
         return cartRepository.save(userCart);
     }
 

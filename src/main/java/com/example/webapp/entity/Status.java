@@ -4,5 +4,7 @@ public enum Status {
     NotPlaced,
     Placed,
     Shipped,
-    Delivered
+    Delivered,
+    Waiting,
+    Cancelled
 }

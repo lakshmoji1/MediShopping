@@ -26,15 +26,15 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers("/login").permitAll()
                 .antMatchers("/index").hasAnyAuthority("ADMIN")
                 .antMatchers("/data").hasAnyAuthority("USER")
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .loginPage("/login").permitAll()
-                .and()
-                .logout().invalidateHttpSession(true)
-                .clearAuthentication(true)
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/logout-success").permitAll();
+                .anyRequest().permitAll();
+//                .and()
+//                .formLogin()
+//                .loginPage("/login").permitAll()
+//                .and()
+//                .logout().invalidateHttpSession(true)
+//                .clearAuthentication(true)
+//                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+//                .logoutSuccessUrl("/logout-success").permitAll();
     }
 
     @Bean
