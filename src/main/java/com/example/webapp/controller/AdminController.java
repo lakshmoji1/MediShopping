@@ -1,13 +1,16 @@
 package com.example.webapp.controller;
 
 import com.example.webapp.entity.*;
+import com.example.webapp.repository.BatchRepository;
 import com.example.webapp.repository.CartRepository;
 import com.example.webapp.repository.PaymentHistoryRepository;
 import com.example.webapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/admin")
@@ -15,6 +18,9 @@ public class AdminController {
 
     @Autowired
     private CartRepository cartRepository;
+
+    @Autowired
+    private BatchRepository batchRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -34,7 +40,14 @@ public class AdminController {
                     currentUser.getShop().addOrderAmountToBalance(userCart.getTotalAmount());
                     PaymentHistory paymentHistory = new PaymentHistory(PaymentType.Received, new Date(), userCart.getTotalAmount(), currentUser);
                     paymentHistoryRepository.save(paymentHistory);
-
+                    List<Batch> updateAllBatches = new ArrayList<>();
+                    for (CartItem cartItem : userCart.getCartItems()) {
+                        Batch updateBatch = batchRepository.findById(cartItem.getBatch().getBatchId()).get();
+                        updateBatch.decreaseQuantity(cartItem.getQuantity());
+                        updateAllBatches.add(updateBatch);
+                        System.out.println("Updating batch quantity to "+updateBatch.getQuantity().toString());
+                        // TODO : Need to perform bulk update on all the batches to update the quantity.
+                    }
                 } else {
                     userCart.setStatus(Status.Cancelled);
                     cartRepository.save(userCart);

@@ -34,4 +34,9 @@ public class Batch {
         this.mrp = mrp;
         this.medicine = medicine;
     }
+
+    public Integer decreaseQuantity(Integer amount) {
+        quantity -= amount;
+        return quantity;
+    }
 }

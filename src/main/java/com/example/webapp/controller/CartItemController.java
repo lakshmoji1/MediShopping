@@ -46,7 +46,6 @@ public class CartItemController {
                 Long amountToBeReduced = result.getTotal();
                 for(CartItem updateItem : cart.getCartItems()) {
                     if(updateItem.equals(result)) {
-//                        selectedBatch.setQuantity(currentQuantity-num + updateItem.getQuantity());
                         updateItem.setTotal(selectedBatch.getMrp()*num);
                         updateItem.setQuantity(num);
                     }
@@ -56,7 +55,6 @@ public class CartItemController {
             else {
                 cart.addCartItem(item);
                 cart.setTotalAmount(cart.getTotalAmount()+item.getTotal());
-//                selectedBatch.setQuantity(currentQuantity-item.getQuantity());
             }
             cart.setUser(user);
             cartRepository.save(cart);
@@ -69,7 +67,6 @@ public class CartItemController {
             newCustomerCart.addCartItem(item);
             newCustomerCart.setTotalAmount(newCustomerCart.getTotalAmount()+ item.getTotal());
             newCustomerCart.setUser(user);
-//            selectedBatch.setQuantity(currentQuantity - item.getQuantity());
             cartRepository.save(newCustomerCart);
             return item;
         }
