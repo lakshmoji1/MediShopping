@@ -46,7 +46,7 @@ public class AdminController {
                         updateBatch.decreaseQuantity(cartItem.getQuantity());
                         updateAllBatches.add(updateBatch);
                         System.out.println("Updating batch quantity to "+updateBatch.getQuantity().toString());
-                        // TODO : Need to perform bulk update on all the batches to update the quantity.
+                        batchRepository.saveAll(updateAllBatches);
                     }
                 } else {
                     userCart.setStatus(Status.Cancelled);
