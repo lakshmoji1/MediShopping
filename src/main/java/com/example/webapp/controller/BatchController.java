@@ -5,12 +5,15 @@ import com.example.webapp.entity.Medicine;
 import com.example.webapp.exception.ResourceNotFoundException;
 import com.example.webapp.repository.BatchRepository;
 import com.example.webapp.repository.MedicineRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/batches")
@@ -76,6 +79,26 @@ public class BatchController {
             return null;
     }
 
+    @GetMapping("/fake/api")
+    public List<Movie> getHello() throws JsonProcessingException {
+        String uri = "https://mocki.io/v1/d4867d8b-b5d5-4a48-a4ab-79131b5809b8";
+        RestTemplate restTemplate = new RestTemplate();
+        String movies = restTemplate.getForObject(uri, String.class);
+        ObjectMapper mapper = new ObjectMapper();
+        Movie[] movieList = mapper.readValue(movies, Movie[].class);
+        ArrayList<Movie> list = new ArrayList<Movie>();
+        for(Movie mov:movieList) {
+            list.add(mov);
+            System.out.println(mov.city);
+            System.out.println(mov.name);
+        }
+        return list.stream().filter(movie -> !movie.city.equals("Alabama")).collect(Collectors.toList());
+    }
+}
+
+class Movie {
+    public String name;
+    public String city;
 }
 
 
